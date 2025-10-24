@@ -1,0 +1,89 @@
+﻿@* View for showing details of a Product *@
+
+@using product_review_rating_api.Helpers 
+@model product_review_rating_api.Models.Product
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">Product Details</h4>
+                </div>
+
+                <div class="card-body">
+                    <h5 class="text-secondary mb-1"><span class="fw-semibold">@Model.Code</span></h5>
+                    <h3 class="mb-3 text-primary">@Model.Name</h3>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to List
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning text-white">
+                            <i class="bi bi-pencil-square"></i> Edit Product
+                        </a>
+                    </div>
+
+                    <hr />
+
+                    <h5 class="mt-4 mb-3">Reviews</h5>
+
+                    @if (Model.Reviews != null && Model.Reviews.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">User</th>
+                                        <th scope="col">Rating</th>
+                                        <th scope="col">Comment</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var review in Model.Reviews)
+                                    {
+                                        var badgeClass = ReviewHelper.GetCategory(review.Rating) switch
+                                        {
+                                            "Good" => "bg-success",
+                                            "Bad" => "bg-warning text-dark",
+                                            "Worst" => "bg-danger",
+                                            _ => "bg-secondary"
+                                        };
+                                        <tr>
+                                            <td>@review.UserId</td>
+                                            <td>
+                                                <span class="badge @badgeClass">@review.Rating ★</span>
+                                            </td>
+                                            <td>@review.Comment</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-secondary text-center">
+                            <i class="bi bi-chat-square-dots"></i> No reviews available.
+                        </div>
+                    }
+
+                    <hr class="my-4" />
+
+                    <h5 class="mb-3">Add a Review</h5>
+                    <div class="border rounded p-3 bg-light">
+                        @await Html.PartialAsync("../Reviews/Create", new Review { ProductId = Model.Id })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

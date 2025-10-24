@@ -1,0 +1,51 @@
+﻿@* 
+    View for creating a review of a Product
+    ---------------------------------------
+    Displays a form that allows the user to submit a new review
+    for a product. Includes fields for Rating and Comment.
+*@
+
+@model product_review_rating_api.Models.Review
+
+<form asp-action="Create"
+      asp-route-productId="@Model.ProductId"
+      asp-controller="Reviews"
+      method="post"
+      class="p-3 border rounded bg-light shadow-sm">
+
+    @* Hidden input for Product ID (not visible to user) *@
+    <input type="hidden" asp-for="ProductId" />
+
+    @* -------------------- Rating Field -------------------- *@
+    <div class="mb-3">
+        <!-- Label for rating -->
+        <label asp-for="Rating" class="form-label fw-bold"></label>
+
+        <!-- Numeric input for rating (0–5) -->
+        <input asp-for="Rating" type="number" min="0" max="5" required
+               class="form-control" placeholder="Enter a rating between 0 and 5" />
+
+        <!-- Validation message for Rating -->
+        <span asp-validation-for="Rating" class="text-danger small"></span>
+    </div>
+
+    @* -------------------- Comment Field -------------------- *@
+    <div class="mb-3">
+        <!-- Label for comment -->
+        <label asp-for="Comment" class="form-label fw-bold"></label>
+
+        <!-- Text input for comment -->
+        <textarea asp-for="Comment" rows="3"
+                  class="form-control" placeholder="Write your review here..."></textarea>
+
+        <!-- Validation message for Comment -->
+        <span asp-validation-for="Comment" class="text-danger small"></span>
+    </div>
+
+    @* -------------------- Submit Button -------------------- *@
+    <div class="text-end">
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-send-fill"></i> Submit Review
+        </button>
+    </div>
+</form>

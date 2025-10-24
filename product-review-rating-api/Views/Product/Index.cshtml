@@ -1,0 +1,94 @@
+﻿@* 
+    Product Index View
+    ------------------
+    Displays a list of all products with a radio button for selection.
+    Allows the user to view details, edit, or delete the selected product.
+*@
+
+@model IEnumerable<product_review_rating_api.Models.Product>
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Product List</h4>
+                    <a asp-action="Create" class="btn btn-light btn-sm">
+                        <i class="bi bi-plus-circle"></i> Add Product
+                    </a>
+                </div>
+
+                <div class="card-body">
+                    @if (Model != null && Model.Any())
+                    {
+                        <form asp-action="HandleSelectedAction" method="post" id="productForm">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col" style="width: 50px;"></th>
+                                            <th scope="col">Product Code</th>
+                                            <th scope="col">Product Name</th>
+                                            <th scope="col">Category</th>
+                                            <th scope="col"># of Reviews</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var product in Model)
+                                        {
+                                            var badgeClass = product.Category switch
+                                            {
+                                                "Good" => "bg-success",
+                                                "Bad" => "bg-warning text-dark",
+                                                "Worst" => "bg-danger",
+                                                _ => "bg-secondary"
+                                            };
+                                            <tr>
+                                                <td>
+                                                    <input type="radio" name="selectedProductIds" value="@product.Id" class="form-check-input" />
+                                                </td>
+                                                <td>@product.Code</td>
+                                                <td>@product.Name</td>
+                                                <td>
+                                                    <span class="badge @badgeClass">@product.Category</span>
+                                                </td>
+                                                <td>@(product.Reviews?.Count ?? 0)</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="d-flex justify-content-center mt-4 gap-3">
+                                <button type="submit" name="action" value="Details" class="btn btn-info text-white">
+                                    <i class="bi bi-eye"></i> Details
+                                </button>
+                                <button type="submit" name="action" value="Edit" class="btn btn-warning text-white">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </button>
+                                <button type="submit" name="action" value="Delete" class="btn btn-danger">
+                                    <i class="bi bi-trash-fill"></i> Delete
+                                </button>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-secondary text-center">
+                            <i class="bi bi-box-seam"></i> No products found.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

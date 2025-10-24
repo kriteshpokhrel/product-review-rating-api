@@ -1,0 +1,48 @@
+﻿@* 
+    View for confirming deletion of a Product 
+*@
+
+@model product_review_rating_api.Models.Product
+
+@{
+    ViewData["Title"] = "Delete Product";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Delete Product</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="mb-3">Are you sure you want to delete this product?</h5>
+
+                    <div class="alert alert-warning d-flex flex-column" role="alert">
+                        <span><strong>Code:</strong> @Model.Code</span>
+                        <span><strong>Name:</strong> @Model.Name</span>
+                    </div>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash-fill"></i> Confirm Delete
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

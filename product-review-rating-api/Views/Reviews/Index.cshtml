@@ -1,0 +1,90 @@
+﻿@using product_review_rating_api.Helpers
+@model IEnumerable<product_review_rating_api.Models.Review>
+
+@{
+    ViewData["Title"] = "Reviews";
+    var categories = new List<string> { "Good", "Bad", "Worst" };
+    var selectedCategory = ViewData["SelectedCategory"]?.ToString();
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-9">
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">All Reviews</h4>
+
+                    @* Export button *@
+                    <form method="get" asp-action="Export" class="m-0">
+                        <input type="hidden" name="category" value="@selectedCategory" />
+                        <button type="submit" class="btn btn-light btn-sm">
+                            <i class="bi bi-download"></i> Export as CSV
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card-body">
+                    @* Category filter *@
+                    <form method="get" class="mb-3 d-flex align-items-center gap-2">
+                        <label for="categoryFilter" class="fw-semibold mb-0">Filter by Category:</label>
+                        <select id="categoryFilter" name="category" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+                            <option value="">All</option>
+                            @foreach (var cat in categories)
+                            {
+                                <option value="@cat" selected="@(selectedCategory == cat ? "selected" : null)">
+                                    @cat
+                                </option>
+                            }
+                        </select>
+                    </form>
+
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">Product Code</th>
+                                        <th scope="col">Product Name</th>
+                                        <th scope="col">User Email</th>
+                                        <th scope="col">Rating</th>
+                                        <th scope="col">Category</th>
+                                        <th scope="col">Comment</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var review in Model)
+                                    {
+                                        var category = review.Product?.Category ?? "No Reviews";
+                                        var badgeClass = category switch
+                                        {
+                                            "Good" => "bg-success",
+                                            "Bad" => "bg-warning text-dark",
+                                            "Worst" => "bg-danger",
+                                            _ => "bg-secondary"
+                                        };
+                                        <tr>
+                                            <td class="fw-semibold">@review.Product?.Code</td>
+                                            <td class="fw-semibold">@review.Product?.Name</td>
+                                            <td>@review.User?.Email</td>
+                                            <td><span class="badge bg-success">@review.Rating ★</span></td>
+                                            <td><span class="badge @badgeClass">@category</span></td>
+                                            <td>@review.Comment</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-secondary text-center">
+                            <i class="bi bi-chat-square-dots"></i> No reviews found.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
